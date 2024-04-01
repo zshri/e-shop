@@ -1,0 +1,50 @@
+server:
+  servlet:
+    session:
+      timeout: 1800 # 30 минут
+#  http2:
+#    enabled: true
+#  ssl:
+#    key-store:
+#    key-store-password:
+#    key-alias:
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres-db
+    username: sa
+    password: 12
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+    generate-ddl: true
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: 6c0d9a5448fb9ea36d17
+            client-secret: ced0bc566550b8044405d75ecdfacc8f2924c7cc
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: 123456789
+
+logging:
+  level:
+    org.springframework.security: trace
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:postgresql://localhost:5432/e-shop-test-db
+    username: sa
+    password: 12

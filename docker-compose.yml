@@ -1,0 +1,38 @@
+version: '3'
+
+volumes:
+  e-shop-postgres_data:
+    driver: local
+  e-shop-redis_data:
+    driver: local
+
+networks:
+  e-shop-network:
+    driver: bridge
+
+services:
+
+  e-shop-redis:
+    container_name: e-shop-redis
+    image: redis:latest
+    ports:
+      - 6379:6379
+    command: redis-server --requirepass 123456789 --appendonly yes
+    volumes:
+      - .volumes/e-shop-redis_data:/data
+    networks:
+      - e-shop-network
+
+  e-shop-postgres:
+    container_name: e-shop-postgres
+    image: postgres:14-alpine
+    volumes:
+      - .volumes/postgres-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: postgres-db, e-shop-test-db
+      POSTGRES_USER: sa
+      POSTGRES_PASSWORD: 12
+    ports:
+      - 5432:5432
+    networks:
+      - e-shop-network
