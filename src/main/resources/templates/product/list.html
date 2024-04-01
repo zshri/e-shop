@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <th:block th:include="~{fragments :: meta}"></th:block>
+    <title>Product List</title>
+</head>
+<body>
+
+<div th:insert="~{fragments :: header-bar}"></div>
+
+
+<div class="container">
+    <h1>Product List</h1>
+    <a href="/products/new">Add New Product</a>
+    <p>Main / Category</p>
+    <div class="row">
+
+        <div class="col-4">
+            <div class="card">
+                <p>filter</p>
+                <form th:action="@{/products}" method="get">
+                    <label>
+                        Category:
+                        <input type="text" name="category" th:value="${selectedCategory}" />
+                    </label>
+                    <label>
+                        Min Price:
+                        <input type="number" name="minPrice" step="0.01" th:value="${minPrice}" />
+                    </label>
+                    <label>
+                        Max Price:
+                        <input type="number" name="maxPrice" step="0.01" th:value="${maxPrice}" />
+                    </label>
+                    <div>
+                        <button  class="btn btn-primary" type="submit">Filter</button>
+                    </div>
+                    <!-- Форма фильтрации -->
+                    <form th:action="@{/api/products}" method="get">
+                        <input type="text" name="filter" th:value="${param.filter}" placeholder="Filter by name"/>
+                        <button type="submit">Filter</button>
+                    </form>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-8">
+            <div class="card p-3">
+                <div class="card">
+<!--                    <p>display</p>-->
+<!--&lt;!&ndash;                    <button th:onclick="sortBy('id')">ID</button>&ndash;&gt;-->
+<!--                    <button th:onclick="sortBy('name')">Name</button>-->
+<!--                    <button type="submit" name="sortBy" value="name">Sort by Name</button>-->
+
+<!--                    <p>display</p>-->
+                    <!-- Пагинация -->
+                    <div>
+                        <a th:if="${products.hasPrevious()}"
+                           th:href="@{/products(page=${products.number - 1}, size=${products.size}, sortBy=${param.sortBy})}">
+                            Previous
+                        </a>
+                        <span th:text="${products.number + 1}">Page Number</span> /
+                        <span th:text="${products.totalPages}">Total Pages</span>
+                        <a th:if="${products.hasNext()}"
+                           th:href="@{/products(page=${products.number + 1}, size=${products.size}, sortBy=${param.sortBy})}">
+                            Next
+                        </a>
+                        <form th:action="@{/products}" method="get">
+                            <!--                        <input type="text" name="filter" th:value="${param.filter}" placeholder="Filter by name"/>-->
+                            <!--                        <button type="submit">Filter</button>-->
+                            <!-- Кнопка для сортировки по имени -->
+                            <button type="submit" name="sortBy" value="name">Sort by Name</button>
+                        </form>
+                    </div>
+
+                </div>
+                <div th:each="product : ${products}">
+                    <div  class="card m-3 border bg-light">
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${product.name}"></h5>
+                            <p class="card-text" th:text="${product.description}"></p>
+                            <p class="card-text" th:text="'Price: $' + ${product.price}"></p>
+                            <a th:href="@{/products/{id}/cart(id=${product.id})}" class="btn btn-warning">Buy</a>
+                            <div sec:authorize="hasRole('ADMIN')" class="btn-group" role="group" aria-label="Product actions">
+                                <a th:href="@{/products/{id}(id=${product.id})}" class="btn btn-primary">Details</a>
+                                <a th:href="@{/products/{id}/edit(id=${product.id})}" class="btn btn-warning">Edit</a>
+                                <a th:href="@{/products/{id}/delete(id=${product.id})}" class="btn btn-danger">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+
+</div>
+
+
+</body>
+</html>

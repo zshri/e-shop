@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <title>Login</title>
+    <th:block th:include="~{fragments :: meta}"></th:block>
+</head>
+<body>
+
+<div th:insert="~{fragments :: header-bar}"></div>
+
+<div class="container">
+    <div class="d-flex justify-content-center">
+        <form th:action="@{/login}" method="post" style="width: 300px;">
+
+            <div style="margin-top: 40px; margin-bottom: 40px"><h1>Login</h1></div>
+
+            <div th:if="${param.error}" style="color: red">Error</div>
+            <div th:if="${param.badCredentials}" style="color: red">Invalid password</div>
+            <div th:if="${param.notFound}" style="color: red">User not found</div>
+
+            <div class="form-outline mb-4">
+                <label for="username">Email:</label>
+                <input type="text" class="form-control" id="username" name="username" required>
+            </div>
+            <div class="form-outline mb-4">
+                <label for="password">Password:</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+
+            <button type="submit" class="btn btn-dark btn-block mb-4" style="width: 100%;">Login</button>
+            <p>Not a member? <a href="/registration">Register</a></p>
+            <a class="btn btn-dark btn-block mb-4" style="width: 100%;" href="/oauth2/authorization/github">Log in with GitHub</a>
+        </form>
+    </div>
+</div>
+</body>
+</html>

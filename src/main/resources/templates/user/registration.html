@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <title>Registration</title>
+    <th:block th:include="~{fragments :: meta}"></th:block>
+</head>
+<body>
+
+<div th:insert="~{fragments :: header-bar}"></div>
+
+<div class="container">
+    <div class="d-flex justify-content-center">
+        <form th:action="@{/registration}" th:object="${newUser}" method="post" style="width: 300px;">
+            <div style="margin-top: 40px; margin-bottom: 40px"><h1>Registration</h1></div>
+
+            <div style="color: red">
+                <div th:if="${#fields.hasErrors('username')}">Username Valid Error</div>
+                <div th:if="${#fields.hasErrors('email')}">Email Valid Error</div>
+                <div th:if="${#fields.hasErrors('password')}">Password Valid Error</div>
+                <div th:if="${errorUserExist}">User Exist Error</div>
+                <div th:if="${error}">Error</div>
+            </div>
+
+            <div class="form-outline mb-3">
+                <label for="fieldUsername" class="form-label">Username:</label>
+                <input type="text" id="fieldUsername" class="form-control" th:field="*{username}"/>
+            </div>
+            <div class="form-outline mb-3">
+                <label for="fieldEmail" class="form-label">Email:</label>
+                <input type="text" id="fieldEmail" class="form-control" th:field="*{email}"/>
+            </div>
+            <div class="mb-3">
+                <label for="fieldPassword" class="form-label">Password:</label>
+                <input type="password" id="fieldPassword" class="form-control" th:field="*{password}"/>
+            </div>
+
+            <button type="submit" class="btn btn-dark btn-block mb-3" style="width: 100%;">Registration</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>
