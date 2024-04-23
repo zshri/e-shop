@@ -18,14 +18,11 @@ import org.springframework.web.servlet.view.RedirectView;
 @Controller
 @RequestMapping("/cart")
 public class CartController {
-
     private final CartService cartService;
-
     @Autowired
     public CartController(CartService cartService) {
         this.cartService = cartService;
     }
-
     @GetMapping
     public String getCart(Model model,
                           RedirectAttributes redirectAttributes,
@@ -42,7 +39,6 @@ public class CartController {
             return "redirect:/login";
         }
     }
-
     @PostMapping("/{idProduct}/add")
     public RedirectView addToCart(@PathVariable("idProduct") Long idProduct,
                                   RedirectAttributes attributes,
@@ -55,5 +51,27 @@ public class CartController {
             return new RedirectView("/login");
         }
     }
-
+    @PostMapping("/{idProduct}/delete")
+    public RedirectView delToCart(@PathVariable("idProduct") Long idProduct,
+                                  RedirectAttributes attributes,
+                                  @AuthenticationPrincipal User user) {
+        if (user != null)  {
+            cartService.deleteProductToCart(idProduct, user);
+            attributes.addFlashAttribute("message", "Product with id " + idProduct + " delete to cart.");
+            return new RedirectView("/cart");
+        } else {
+            return new RedirectView("/login");
+        }
+    }
+    @PostMapping("/remove")
+    public RedirectView removeCart(RedirectAttributes attributes,
+                                  @AuthenticationPrincipal User user) {
+        if (user != null)  {
+            cartService.removeCart(user);
+            attributes.addFlashAttribute("message", "Cart removed.");
+            return new RedirectView("/cart");
+        } else {
+            return new RedirectView("/login");
+        }
+    }
 }
