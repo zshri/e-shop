@@ -46,12 +46,6 @@ public class User implements UserDetails, OAuth2User {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<Product> products = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private List<Order> orders = new ArrayList<>();
-
     @Override
     public Map<String, Object> getAttributes() {
         return null;

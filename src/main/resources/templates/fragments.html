@@ -13,13 +13,17 @@
             <div class="collapse navbar-collapse" id="navbarScroll">
                 <ul class="navbar-nav me-auto my-2 my-lg-0 " style="--bs-scroll-height: 100px;">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/products">Products</a>
+                        <a class="nav-link active" aria-current="page" href="/catalog">Catalog</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="/delivery">Delivery</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="/about">About</a>
+                    </li>
+
+                    <li sec:authorize="hasRole('ADMIN')" class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/admin">Admin</a>
                     </li>
                 </ul>
 

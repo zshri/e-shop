@@ -28,6 +28,11 @@ public class InitDataConfig {
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.addScript(new ClassPathResource("data/users.sql"));
         populator.addScript(new ClassPathResource("data/user_role.sql"));
+        populator.addScript(new ClassPathResource("data/category.sql"));
+        populator.addScript(new ClassPathResource("data/product.sql"));
+        populator.addScript(new ClassPathResource("data/cart.sql"));
+        populator.addScript(new ClassPathResource("data/cart_item.sql"));
+
         return populator;
     }
 }

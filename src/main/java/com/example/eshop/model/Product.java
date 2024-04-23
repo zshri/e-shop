@@ -34,8 +34,10 @@ public class Product {
 
 //    @Length(min = 1, max = 3)
     @NotBlank(message = "Description is mandatory")
-    @Size(min = 2, max = 2000, message = "Description must be less than 2000 characters")
+    @Size(min = 2, max = 10000, message = "Description must be less than 2000 characters")
     private String description;
+
+    private String shortDescription;
 
     @Positive(message = "Price must be positive")
     private Double price;

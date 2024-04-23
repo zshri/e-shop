@@ -9,57 +9,46 @@
 
 <div class="container">
     <h1>Cart</h1>
+
+    <div th:if="${message}">
+        <div class="alert alert-warning" role="alert">
+            <span class="error-message" th:text="${message}">Er</span>
+        </div>
+    </div>
+
     <div class="row">
 
         <div class="col-7">
-            <div th:each="product : ${cart}">
-<!--                <div  class="card m-3 border bg-light">-->
-<!--                    <div class="card-body">-->
-<!--                        <h5 class="card-title" th:text="${product.name}"></h5>-->
-<!--                        <p class="card-text" th:text="${product.description}"></p>-->
-<!--                        <p class="card-text" th:text="'Price: $' + ${product.price}"></p>-->
-<!--                    </div>-->
-<!--                </div>-->
-            </div>
-
             <table class="table">
                 <thead>
-                <tr>
-                    <th scope="col">PRODUCT</th>
-                    <th scope="col">PRICE</th>
-                    <th scope="col">QUANTITY</th>
-                    <th scope="col">SUBTOTAL</th>
-                    <th scope="col"></th>
-                </tr>
+                    <tr>
+                        <th scope="col">PRODUCT</th>
+                        <th scope="col">PRICE</th>
+                        <th scope="col">QUANTITY</th>
+                        <th scope="col">SUBTOTAL</th>
+                        <th scope="col"></th>
+                    </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td>Product 1</td>
-                    <td>$10.00</td>
-                    <td><input type="number" class="form-control quantity" style="width: 100px" value="1" min="1"></td>
-                    <td class="subtotal">$10.00</td>
-                    <td><button class="btn btn-danger delete-product">Удалить</button></td>
-                </tr>
-                <tr>
-                    <td>Product 2</td>
-                    <td>$20.00</td>
-                    <td><input type="number" class="form-control quantity" style="width: 100px" value="1" min="1"></td>
-                    <td class="subtotal">$20.00</td>
-                    <td><button class="btn btn-danger delete-product">Удалить</button></td>
-                </tr>
+                    <tr th:each="item : ${cart.cartItems}">
+                        <td th:text="${item.product.name}"></td>
+                        <td th:text="'$' + ${item.product.price}"></td>
+                        <td><input type="number" class="form-control quantity" style="width: 100px"
+                               th:value="${item.quantity}" min="1"></td>
+                        <td class="subtotal" th:text="'$' + ${item.product.price * item.quantity}"></td>
+                        <td>
+                            <button class="btn btn-danger delete-product">Удалить</button>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
             <button id="clearTable" class="btn btn-danger">Очистить</button>
-
         </div>
 
 
         <div class="col-5 text-center">
-
-            <h1>TOTAL: 100$$</h1>
-
+            <h1 th:text="'TOTAL: $' + ${#aggregates.sum(cart.cartItems.![product.price * quantity])}"></h1>
             <a th:href="@{/checkout}" class="btn btn-warning">Checkout</a>
-
         </div>
 
     </div>

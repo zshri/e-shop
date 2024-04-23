@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="~{fragments :: meta}"></th:block>
+    <title>Product Details</title>
+</head>
+<body>
+<div th:insert="~{fragments :: header-bar}"></div>
+
+<!--todo if isAdmin показать автор -->
+
+<div class="container">
+    <h1>Product Details</h1>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/catalog}">Catalog</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/catalog/{category}(category=${category.name})}" th:text="${category.name}">Category</a></li>
+            <li class="breadcrumb-item active" aria-current="page"><span th:text="${product.name}"></span></li>
+        </ol>
+    </nav>
+
+    <div class="row" >
+
+
+        <div class="col-4">
+            <div class="card m-1">
+<!--                <img class="card-img-top" src="путь_к_изображению_товара" alt="Изображение товара">-->
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${product.name}"></h5>
+                    <p class="card-text" th:text="${product.description}"></p>
+                    <p class="card-text">Price: <span th:text="${product.price}"></span></p>
+                    <form th:action="@{/cart/{id}/add(id=${product.id})}" method="post">
+                        <button type="submit" class="btn btn-warning">Buy</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+
+
+
+</div>
+
+
+
+</body>
+</html>
