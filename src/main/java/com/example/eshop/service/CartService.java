@@ -30,7 +30,7 @@ public class CartService {
             return cartRepository.save(newCart);
         }
     }
-    public void addProductToCart(Long productId, User user) {
+    public String addProductToCart(Long productId, User user) {
         Cart cart = getCart(user);
         Optional<Product> product = productRepository.findById(productId);
         if (product.isPresent()) {
@@ -40,16 +40,16 @@ public class CartService {
                     .product(product1)
                     .quantity(1)
                     .build();
-//            if (cart.getCartItems() == null) {
-//                cart.setCartItems(new ArrayList<>());}
             cart.getCartItems().add(cartItem);
             cartRepository.save(cart);
+            return product1.getName();
         }
+        return null;
     }
-    public void deleteProductToCart(Long productId, User user) {
+    public void deleteCartItemToCart(Long idCartItem, User user) {
         Cart cart = cartRepository.findByUserId(user.getId());
         if (cart != null) {
-            cart.getCartItems().removeIf(item -> item.getProduct().getId().equals(productId));
+            cart.getCartItems().removeIf(item -> item.getId().equals(idCartItem));
             cartRepository.save(cart);
         }
     }
@@ -60,5 +60,4 @@ public class CartService {
             cartRepository.save(cart);
         }
     }
-
 }

@@ -12,9 +12,15 @@
         <a th:href="@{/admin}">Admin Dashboard</a> <span> / </span> <a th:href="@{/admin/products/new}">Product Edit Form</a>
     </div>
 
+    <div th:if="${message}">
+        <div class="alert alert-warning" role="alert">
+            <span class="error-message" th:text="${message}">Er</span>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-8">
-            <form th:action="@{/admin/products/edit}" th:object="${product}" method="post" class="form-group">
+            <form th:action="@{/admin/products/{id}(id=${product.id})}" th:object="${product}" method="post" class="form-group">
                 <input type="hidden" th:field="*{id}"/>
                 <div class="form-group">
                     <div>

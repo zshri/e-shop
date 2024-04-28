@@ -7,22 +7,39 @@
 <body>
 <div th:insert="~{fragments :: header-bar}"></div>
 
-<div class="container">
-    <h1>Order Details</h1>
-    Заказ оформлен
-    Его номер — 65096323. Спасибо, что выбираете нас!
 
-    Доставка: в пятницу, 23 февраля
-    Самовывоз из ПВЗ «5пост», Симонова ул, 1 лит.А
-    Уведомления на почту и через СМС
-
-    Итого к оплате
-    Неоплаченные заказы отменяются автоматически.
-
-    Состав и детали заказа
-
+<div class="d-flex align-items-center justify-content-center ">
+    <div class="text-center mt-5">
+        <h1 class="display-4">Your order has been successfully placed!</h1>
+        <div class="mt-5 mb-5" style="text-align: center">
+            <h1 th:text="${order.status}"
+                th:class="${order.status.name eq 'COMPLETED' ? 'text-success' : (order.status.name eq 'PENDING' ? 'text-primary' : (order.status.name eq 'CANCELLED' ? 'text-danger' : ''))}">
+            </h1>
+        </div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">PRODUCT</th>
+                <th scope="col">PRICE</th>
+                <th scope="col">QUANTITY</th>
+                <th scope="col">SUBTOTAL</th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${order.items}">
+                <td th:text="${item.product.name}"></td>
+                <td th:text="'$' + ${item.product.price}"></td>
+                <td th:text="${item.quantity}"></td>
+                <td class="subtotal" th:text="'$' + ${item.product.price * item.quantity}"></td>
+            </tr>
+            </tbody>
+        </table>
+        <form th:action="@{/catalog}" method="get">
+            <button type="submit" class="btn btn-dark">Go Catalog</button>
+        </form>
+    </div>
 </div>
-
 
 </body>
 </html>

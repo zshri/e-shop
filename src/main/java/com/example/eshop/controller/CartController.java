@@ -34,7 +34,7 @@ public class CartController {
             }
             Cart cart = cartService.getCart(user);
             model.addAttribute("cart", cart );
-            return "cart";
+            return "order/cart";
         } else {
             return "redirect:/login";
         }
@@ -44,20 +44,20 @@ public class CartController {
                                   RedirectAttributes attributes,
                                   @AuthenticationPrincipal User user) {
         if (user != null)  {
-            cartService.addProductToCart(idProduct, user);
-            attributes.addFlashAttribute("message", "Product with id " + idProduct + " added to cart.");
+            String productName = cartService.addProductToCart(idProduct, user);
+            attributes.addFlashAttribute("message", productName + " added to cart.");
             return new RedirectView("/cart");
         } else {
             return new RedirectView("/login");
         }
     }
-    @PostMapping("/{idProduct}/delete")
-    public RedirectView delToCart(@PathVariable("idProduct") Long idProduct,
+    @PostMapping("/{idCartItem}/delete")
+    public RedirectView delToCart(@PathVariable("idCartItem") Long idCartItem,
                                   RedirectAttributes attributes,
                                   @AuthenticationPrincipal User user) {
         if (user != null)  {
-            cartService.deleteProductToCart(idProduct, user);
-            attributes.addFlashAttribute("message", "Product with id " + idProduct + " delete to cart.");
+            cartService.deleteCartItemToCart(idCartItem, user);
+            attributes.addFlashAttribute("message", "Product with id " + idCartItem + " delete to cart.");
             return new RedirectView("/cart");
         } else {
             return new RedirectView("/login");

@@ -27,8 +27,4 @@ public class Category {
     @Pattern(regexp = "^[a-zA-Z-]*$", message = "Name must contain only English letters and hyphen")
     private String name;
 
-//    todo а как решить подругому ? типо разобраться с сесией как действовать
-//    @OneToMany(mappedBy = "category")
-//    private List<Product> products;
-
 }

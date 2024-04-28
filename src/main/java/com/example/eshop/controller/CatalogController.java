@@ -5,7 +5,6 @@ import com.example.eshop.model.Category;
 import com.example.eshop.model.Product;
 import com.example.eshop.model.exception.CategoryNotFoundException;
 import com.example.eshop.model.exception.ProductNotFoundException;
-import com.example.eshop.service.CartService;
 import com.example.eshop.service.CategoryService;
 import com.example.eshop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,12 +35,16 @@ public class CatalogController {
     public String getCatalog(Model model,
                              @PathVariable(value = "category", required = false) String category,
                              @RequestParam(defaultValue = "0") int page,
-                             @RequestParam(defaultValue = "10") int size,
+                             @RequestParam(defaultValue = "12") int size,
                              @RequestParam(defaultValue = "id") String sortBy,
                              @RequestParam(required = false) Double minPrice,
                              @RequestParam(required = false) Double maxPrice) {
         List<Category> allCategories = categoryService.getAllCategories();
         model.addAttribute("categories", allCategories);
+
+        if (size < 1 || size > 100) {
+            throw new IllegalArgumentException("Размер страницы должен быть между 1 и 100.");
+        }
 
         if (category != null) {
             Optional<Category> categoryOptional = allCategories.stream()

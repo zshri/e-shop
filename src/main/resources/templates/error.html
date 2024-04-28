@@ -3,16 +3,20 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <th:block th:include="~{fragments :: meta}"></th:block>
-
-    <title>Error page</title>
+    <title>Error</title>
 </head>
 <body>
 
 <div th:insert="~{fragments :: header-bar}"></div>
 
-<div class="container">
-    <p>Error page</p>
-    <p th:if="${errorMessage}" th:text="${errorMessage}"></p>
+<div class="d-flex align-items-center justify-content-center ">
+    <div class="text-center mt-5">
+        <h1 class="display-1 fw-bold">ERROR</h1>
+        <p th:if="${errorMessage}" class="lead" th:text="${errorMessage}"></p>
+        <form th:action="@{/catalog}" method="get">
+            <button type="submit" class="btn btn-dark">Go Catalog</button>
+        </form>
+    </div>
 </div>
 
 </body>

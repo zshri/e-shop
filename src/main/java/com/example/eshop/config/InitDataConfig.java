@@ -31,7 +31,6 @@ public class InitDataConfig {
         populator.addScript(new ClassPathResource("data/category.sql"));
         populator.addScript(new ClassPathResource("data/product.sql"));
         populator.addScript(new ClassPathResource("data/cart.sql"));
-        populator.addScript(new ClassPathResource("data/cart_item.sql"));
 
         return populator;
     }

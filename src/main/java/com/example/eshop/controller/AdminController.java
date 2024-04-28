@@ -7,13 +7,14 @@ import com.example.eshop.model.User;
 import com.example.eshop.service.CartService;
 import com.example.eshop.service.CategoryService;
 import com.example.eshop.service.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.Instant;
 import java.util.List;
@@ -32,7 +33,7 @@ public class AdminController {
     }
 
     @GetMapping
-    public String getAdminDashboard(Model model, Authentication authentication){
+    public String getAdminDashboard(){
         return "admin/dashboard";
     }
 
@@ -48,7 +49,14 @@ public class AdminController {
         return "admin/productForm";
     }
     @PostMapping("/products")
-    public String addProduct(@ModelAttribute("product") Product product, @AuthenticationPrincipal User user) {
+    public String addProduct(@Valid @ModelAttribute("product") Product product,
+                             BindingResult bindingResult,
+                             RedirectAttributes attributes,
+                             @AuthenticationPrincipal User user) {
+        if (bindingResult.hasErrors()) {
+            attributes.addFlashAttribute("message", "validation error");
+            return "redirect:/admin/products/new";
+        }
         product.setCreateAt(Instant.now());
         product.setUser(user);
         if (product.getDescription().length() > 200) {
@@ -59,20 +67,28 @@ public class AdminController {
         productService.saveProduct(product);
         return "redirect:/catalog/products/" + product.getId();
     }
-    @GetMapping("/products/{id}/edit")
-    public String showEditProductForm(@PathVariable Long id, Model model) {
+    @GetMapping("/products/{productId}/edit")
+    public String showEditProductForm(@PathVariable(value = "productId") Long id, Model model) {
         model.addAttribute("allCategories", categoryService.getAllCategories());
         model.addAttribute("product", productService.findProductById(id).orElse(null));
         return "admin/productEditForm";
     }
-    @PostMapping("/products/{id}")
-    public String updateProduct(@PathVariable Long id, @ModelAttribute("product") Product product) {
+    @PostMapping("/products/{productId}")
+    public String updateProduct(@PathVariable(value = "productId") Long id,
+                                @Valid @ModelAttribute("product") Product product,
+                                BindingResult bindingResult,
+                                RedirectAttributes attributes) {
+        if (bindingResult.hasErrors()) {
+            attributes.addFlashAttribute("message", "validation error");
+            return "redirect:/admin/products/" + id + "/edit";
+        }
         Optional<Product> existingProduct = productService.findProductById(id);
         if (existingProduct.isPresent()){
             Product productToUpdate = existingProduct.get();
             productToUpdate.setCategory(product.getCategory());
             productToUpdate.setName(product.getName());
             productToUpdate.setDescription(product.getDescription());
+            productToUpdate.setPrice(product.getPrice());
             if (product.getDescription().length() > 200) {
                 productToUpdate.setShortDescription(product.getDescription().substring(0,200) + "..");
             } else {
@@ -83,7 +99,7 @@ public class AdminController {
         return "redirect:/catalog/products/" + product.getId();
     }
 
-    @DeleteMapping ("/products/{id}/delete")
+    @PostMapping ("/products/{id}/delete")
     public String deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
         return "redirect:/catalog";

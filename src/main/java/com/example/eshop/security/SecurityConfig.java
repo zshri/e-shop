@@ -24,6 +24,10 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/admin/**").hasAuthority(Role.ROLE_ADMIN.name())
+                        .requestMatchers("/cart/**").hasAuthority(Role.ROLE_USER.name())
+                        .requestMatchers("/orders/**").hasAuthority(Role.ROLE_USER.name())
+                        .requestMatchers("/order/**").hasAuthority(Role.ROLE_USER.name())
+                        .requestMatchers("/checkout/**").hasAuthority(Role.ROLE_USER.name())
                         .requestMatchers("/login", "/registration").anonymous()
                         .anyRequest().permitAll()
                 )

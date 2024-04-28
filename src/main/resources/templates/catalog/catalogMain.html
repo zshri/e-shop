@@ -3,134 +3,266 @@
 <head>
     <th:block th:include="~{fragments :: meta}"></th:block>
     <title>Catalog</title>
+
+    <style>
+        .filter-icon::before {
+            content: "⚙️";
+            margin-right: 5px;
+        }
+        .line-clamp {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .line-clamp2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
 </head>
 <body>
 
 <div th:insert="~{fragments :: header-bar}"></div>
 
 <div class="container">
-    <h1>Catalog</h1>
+
     <div class="row">
-        <div class="col-4">
-
-            <div class="card">
-                <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                    <div class="navbar-nav flex-column">
-                        <a class="nav-link" th:href="@{/catalog}">All</a>
-                        <a class="nav-link" th:each="category : ${categories}"
-                           th:href="@{/catalog/{category}(category=${category.name})}"
-                           th:text="${category.name}">Link</a>
-                    </div>
-                </nav>
-            </div>
-
-            <div class="card bg-light mt-4">
-                <div class="card-body">
-                    <h5 class="card-title">Filter</h5>
-
-                    <form th:unless="${category}" class="form-inline" th:action="@{/catalog}" method="get">
-                        <div class="form-group mr-2">
-                            <label class="mr-2" for="minPrice">Min Price:</label>
-                            <input type="number" class="form-control" id="minPrice" name="minPrice" step="0.01"
-                                   th:value="${minPrice}"/>
-                        </div>
-                        <div class="form-group mr-2">
-                            <label class="mr-2" for="maxPrice">Max Price:</label>
-                            <input type="number" class="form-control" id="maxPrice" name="maxPrice" step="0.01"
-                                   th:value="${maxPrice}"/>
-                        </div>
-                        <button class="btn btn-primary mr-2 mt-2" type="submit">Filter</button>
-                    </form>
-
-                    <form th:if="${category}" class="form-inline" th:action="@{/catalog/{category}(category=${category})}" method="get">
-                        <div class="form-group mr-2">
-                            <label class="mr-2" for="minPrice">Min Price:</label>
-                            <input type="number" class="form-control" id="minPrice" name="minPrice" step="0.01"
-                                   th:value="${minPrice}"/>
-                        </div>
-                        <div class="form-group mr-2">
-                            <label class="mr-2" for="maxPrice">Max Price:</label>
-                            <input type="number" class="form-control" id="maxPrice" name="maxPrice" step="0.01"
-                                   th:value="${maxPrice}"/>
-                        </div>
-                        <button class="btn btn-primary mr-2 mt-2" type="submit">Filter</button>
-                    </form>
+            <div class="mt-3 mb-3 d-flex justify-content-between align-items-center">
+                <!-- Filter button -->
+                <button class="btn btn-light" id="toggleButton">
+                    <span class="filter-icon"></span>
+                    <span>Filter</span>
+                </button>
+                <!-- Sort -->
+                <div class="mr-2 mb-2 p-1 ml-auto">
+                    <span>Sort by:</span>
+                    <span><a class="text-decoration-none mr-2" style="color: black;"
+                             th:href="@{${#strings.isEmpty(category)} ? @{/catalog(sortBy='name')} : @{/catalog/} + ${category} + '?sortBy=name'}">Name</a></span>
+                    <span><a class="text-decoration-none mr-2" style="color: black;"
+                             th:href="@{${#strings.isEmpty(category)} ? @{/catalog(sortBy='price', )} : @{/catalog/} + ${category} + '?sortBy=price'  }">Price</a></span>
                 </div>
             </div>
+    </div>
+
+    <div class="collapse" id="firstRow">
+
+        <div class="row">
+            <div class="col-md-4 col-sm-12">
+                <div class="card mb-2">
+                    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                        <div class="card-body">
+                            <h5 class="card-title text-muted">Category</h5>
+                            <div class="navbar-nav flex-column">
+                                <a class="nav-link" th:href="@{/catalog}">All</a>
+                                <a class="nav-link" th:each="category : ${categories}" th:href="@{/catalog/{category}(category=${category.name})}" th:text="${category.name}">Link</a>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+
+                <div class="card bg-light mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title text-muted">Filter</h5>
+                        <form th:unless="${category}" class="form-inline" th:action="@{/catalog}" method="get">
+                            <div class="form-group mr-2">
+                                <label class="mr-2" for="minPrice">Min Price:</label>
+                                <input type="number" class="form-control" id="minPrice" name="minPrice" step="0.01"
+                                       th:value="${minPrice}"/>
+                            </div>
+                            <div class="form-group mr-2">
+                                <label class="mr-2" for="maxPrice">Max Price:</label>
+                                <input type="number" class="form-control" id="maxPrice" name="maxPrice" step="0.01"
+                                       th:value="${maxPrice}"/>
+                            </div>
+
+                            <input type="hidden" name="page" th:value="${param.page}" />
+                            <input type="hidden" name="size" th:value="${param.size}" />
+                            <input type="hidden" name="size" th:value="${param.sortBy}" />
+
+                            <button class="btn btn-light btn-outline-dark mr-2 mt-2 w-100" type="submit">Filter</button>
+
+                        </form>
+                        <form th:if="${category}" class="form-inline" th:action="@{/catalog/{category}(category=${category})}" method="get">
+                            <div class="form-group mr-2">
+                                <label class="mr-2" for="minPrice">Min Price:</label>
+                                <input type="number" class="form-control" id="minPrice" name="minPrice" step="0.01"
+                                       th:value="${minPrice}"/>
+                            </div>
+                            <div class="form-group mr-2">
+                                <label class="mr-2" for="maxPrice">Max Price:</label>
+                                <input type="number" class="form-control" id="maxPrice" name="maxPrice" step="0.01"
+                                       th:value="${maxPrice}"/>
+                            </div>
+
+                            <input type="hidden" name="page" th:value="${param.page}" />
+                            <input type="hidden" name="size" th:value="${param.size}" />
+                            <input type="hidden" name="size" th:value="${param.sortBy}" />
 
 
+                            <button class="btn btn-light btn-outline-dark mr-2 mt-2 w-100" type="submit">Filter</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-md-8 col-sm-12">
+                <div class="row">
+                    <div th:each="product : ${products}" class="col-md-6 col-sm-6 mb-4">
+                        <div class="card">
+                            <!--                <img src="product-image-1.jpg" class="card-img-top" alt="Product 1">-->
+                            <div class="card-body">
+                                <a th:href="@{/catalog/products/{id}(id=${product.id})}" style="text-decoration: none; color: inherit;">
+                                    <p class="card-title h5 line-clamp2" th:text="${product.name}"></p>
+                                </a>
+                                <p class="card-text line-clamp" th:text="${product.shortDescription}"></p>
+                                <p class="card-text"><strong th:text="'Price: $' + ${product.price}"></strong></p>
+
+                                <div class="btn-group" role="group" aria-label="Product actions">
+                                    <form th:action="@{/cart/{id}/add(id=${product.id})}" method="post">
+                                        <button type="submit" class="btn btn-dark" style="margin-right: 5px">Buy Now</button>
+                                    </form>
+                                    <div sec:authorize="hasRole('ADMIN')" class="btn-group" role="group" >
+                                        <form sec:authorize="hasRole('ADMIN')" th:action="@{/admin/products/{id}/edit(id=${product.id})}" method="get">
+                                            <button type="submit" class="btn btn-primary" style="margin-right: 5px">Edit</button>
+                                        </form>
+                                        <form sec:authorize="hasRole('ADMIN')" th:action="@{/admin/products/{id}/delete(id=${product.id})}" method="post">
+                                            <button type="submit" class="btn btn-primary" style="margin-right: 5px">Delete</button>
+                                        </form>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="col-8">
-
-            <!-- Sort -->
-            <div class="border bg-light mr-2 mb-2 p-1">
-                <span>Sort by:</span>
-                <span><a class="text-decoration-none mr-2"
-                         th:href="@{${#strings.isEmpty(category)} ? @{/catalog(sortBy='name')} : @{/catalog/} + ${category} + '?sortBy=name'}">Name</a></span>
-                <span><a class="text-decoration-none mr-2"
-                         th:href="@{${#strings.isEmpty(category)} ? @{/catalog(sortBy='price', )} : @{/catalog/} + ${category} + '?sortBy=price'  }">Price</a></span>
-            </div>
-
-            <div th:each="product : ${products}" class="card border bg-light" style="margin-bottom: 10px">
-                <div class="card-body">
-                    <a th:href="@{/catalog/products/{id}(id=${product.id})}">
-                        <h5 class="card-title" th:text="${product.name}"></h5>
-                    </a>
-                    <p class="card-text" th:text="${product.shortDescription}"></p>
-                    <p class="card-text" th:text="'Price: $' + ${product.price}"></p>
-                    <form th:action="@{/cart/{id}/add(id=${product.id})}" method="post">
-                        <button type="submit" class="btn btn-warning">Buy</button>
-                    </form>
-                    <div sec:authorize="hasRole('ADMIN')" class="btn-group" role="group" aria-label="Product actions">
-                        <a th:href="@{/admin/products/{id}/edit(id=${product.id})}" class="btn btn-primary">Edit</a>
-                        <a th:href="@{/admin/products/{id}/delete(id=${product.id})}" class="btn btn-danger">Delete</a>
-                    </div>
-                </div>
-            </div>
-
+        <div class="row">
             <nav aria-label="Page navigation">
-                <ul class="pagination justify-content-center">
+                <ul class="pagination justify-content-center" style="text-decoration: none; color: inherit;">
                     <li class="page-item" th:classappend="${products.hasPrevious()} ? '' : 'disabled'">
                         <span th:if="${category}">
-                            <a class="page-link" th:if="${products.hasPrevious()}"
+                            <a class="page-link" style="color: black;" th:if="${products.hasPrevious()}"
                                th:href="@{/catalog/{category}(category=${category}, page=${products.number - 1}, size=${products.size}, sortBy=${param.sortBy})}">
                                 Previous
                             </a>
                         </span>
                         <span th:unless="${category}">
-                            <a class="page-link" th:if="${products.hasPrevious()}"
-                               th:href="@{/catalog(page=${products.number - 1}, size=${products.size}, sortBy=${param.sortBy})}">
+                        <a class="page-link" style="color: black;" th:if="${products.hasPrevious()}"
+                           th:href="@{/catalog(page=${products.number - 1}, size=${products.size}, sortBy=${param.sortBy})}">
                             Previous
                         </a>
-                        </span>
-                        <span class="page-link" th:unless="${products.hasPrevious()}">Previous</span>
+                    </span>
+                        <span class="page-link" style="color: black;" th:unless="${products.hasPrevious()}">Previous</span>
                     </li>
                     <li class="page-item disabled">
-                        <span class="page-link" th:text="${products.number + 1} + ' of ' + ${products.totalPages}">Page Number of Total Pages</span>
+                    <span class="page-link" style="color: black;" th:text="${products.number + 1} + ' of ' + ${products.totalPages}">
+                        Page Number of Total Pages
+                    </span>
                     </li>
                     <li class="page-item" th:classappend="${products.hasNext()} ? '' : 'disabled'">
                         <span th:if="${category}">
-                            <a class="page-link" th:if="${products.hasNext()}"
+                            <a class="page-link" style="color: black;" th:if="${products.hasNext()}"
                                th:href="@{/catalog/{category}(category=${category}, page=${products.number + 1}, size=${products.size}, sortBy=${param.sortBy})}">
                                 Next
                             </a>
                         </span>
                         <span th:unless="${category}">
-                            <a class="page-link" th:if="${products.hasNext()}"
+                            <a class="page-link" style="color: black;" th:if="${products.hasNext()}"
                                th:href="@{/catalog(page=${products.number + 1}, size=${products.size}, sortBy=${param.sortBy})}">
                             Next
                         </a>
                         </span>
 
-                        <span class="page-link" th:unless="${products.hasNext()}">Next</span>
+                        <span class="page-link" th:unless="${products.hasNext()}" style="color: black;">Next</span>
                     </li>
                 </ul>
             </nav>
-
         </div>
     </div>
+
+
+
+    <div class="row" id="secondRow">
+        <div th:each="product : ${products}" class="col-md-4 col-sm-6 mb-4">
+            <div class="card">
+                <!--                <img src="product-image-1.jpg" class="card-img-top" alt="Product 1">-->
+                <div class="card-body">
+                    <a th:href="@{/catalog/products/{id}(id=${product.id})}" style="text-decoration: none; color: inherit;">
+                        <p class="card-title h5 line-clamp2" th:text="${product.name}"></p>
+                    </a>
+                    <p class="card-text line-clamp" th:text="${product.shortDescription}"></p>
+                    <p class="card-text"><strong th:text="'Price: $' + ${product.price}"></strong></p>
+
+                    <div class="btn-group" role="group" aria-label="Product actions">
+                        <form th:action="@{/cart/{id}/add(id=${product.id})}" method="post">
+                            <button type="submit" class="btn btn-dark" style="margin-right: 5px">Buy Now</button>
+                        </form>
+                        <div sec:authorize="hasRole('ADMIN')" class="btn-group" role="group" >
+                            <form sec:authorize="hasRole('ADMIN')" th:action="@{/admin/products/{id}/edit(id=${product.id})}" method="get">
+                                <button type="submit" class="btn btn-primary" style="margin-right: 5px">Edit</button>
+                            </form>
+                            <form sec:authorize="hasRole('ADMIN')" th:action="@{/admin/products/{id}/delete(id=${product.id})}" method="post">
+                                <button type="submit" class="btn btn-primary" style="margin-right: 5px">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center" style="text-decoration: none; color: inherit;">
+                <li class="page-item" th:classappend="${products.hasPrevious()} ? '' : 'disabled'">
+                        <span th:if="${category}">
+                            <a class="page-link" style="color: black;" th:if="${products.hasPrevious()}"
+                               th:href="@{/catalog/{category}(category=${category}, page=${products.number - 1}, size=${products.size}, sortBy=${param.sortBy})}">
+                                Previous
+                            </a>
+                        </span>
+                    <span th:unless="${category}">
+                        <a class="page-link" style="color: black;" th:if="${products.hasPrevious()}"
+                           th:href="@{/catalog(page=${products.number - 1}, size=${products.size}, sortBy=${param.sortBy})}">
+                            Previous
+                        </a>
+                    </span>
+                    <span class="page-link" style="color: black;" th:unless="${products.hasPrevious()}">Previous</span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link" style="color: black;" th:text="${products.number + 1} + ' of ' + ${products.totalPages}">
+                        Page Number of Total Pages
+                    </span>
+                </li>
+                <li class="page-item" th:classappend="${products.hasNext()} ? '' : 'disabled'">
+                        <span th:if="${category}">
+                            <a class="page-link" style="color: black;" th:if="${products.hasNext()}"
+                               th:href="@{/catalog/{category}(category=${category}, page=${products.number + 1}, size=${products.size}, sortBy=${param.sortBy})}">
+                                Next
+                            </a>
+                        </span>
+                    <span th:unless="${category}">
+                            <a class="page-link" style="color: black;" th:if="${products.hasNext()}"
+                               th:href="@{/catalog(page=${products.number + 1}, size=${products.size}, sortBy=${param.sortBy})}">
+                            Next
+                        </a>
+                        </span>
+
+                    <span class="page-link" th:unless="${products.hasNext()}" style="color: black;">Next</span>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+
 </div>
+
+<div th:insert="~{fragments :: footer}"></div>
 
 </body>
 </html>
