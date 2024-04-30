@@ -95,6 +95,7 @@
             <version>6.2.1</version>
         </dependency>
 
+
         <!--UTILS-->
 
         <dependency>
@@ -102,6 +103,7 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+
 <!--        <dependency>-->
 <!--            <groupId>org.springframework.boot</groupId>-->
 <!--            <artifactId>spring-boot-devtools</artifactId>-->
@@ -116,6 +118,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <mainClass>com.example.eshop.EShopApplication</mainClass>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>

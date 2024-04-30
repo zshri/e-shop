@@ -12,9 +12,9 @@
         <a th:href="@{/admin}">Admin Dashboard</a> <span> / </span> <a th:href="@{/admin/products/new}">Product Form</a>
     </div>
 
-    <div th:if="${message}">
+    <div th:if="${error}">
         <div class="alert alert-warning" role="alert">
-            <span class="error-message" th:text="${message}">Er</span>
+            <span class="error-message" th:text="${error}">Error</span>
         </div>
     </div>
 

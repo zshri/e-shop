@@ -54,18 +54,25 @@ public class AdminController {
                              RedirectAttributes attributes,
                              @AuthenticationPrincipal User user) {
         if (bindingResult.hasErrors()) {
-            attributes.addFlashAttribute("message", "validation error");
+            attributes.addFlashAttribute("error", "validation error");
             return "redirect:/admin/products/new";
         }
-        product.setCreateAt(Instant.now());
-        product.setUser(user);
-        if (product.getDescription().length() > 200) {
-            product.setShortDescription(product.getDescription().substring(0,200) + "..");
-        } else {
-            product.setShortDescription(product.getDescription());
+        try {
+            product.setCreateAt(Instant.now());
+            product.setUser(user);
+            product.setDeleted(false);
+            if (product.getDescription().length() > 200) {
+                product.setShortDescription(product.getDescription().substring(0,200) + "..");
+            } else {
+                product.setShortDescription(product.getDescription());
+            }
+            productService.saveProduct(product);
+            return "redirect:/catalog/products/" + product.getId();
+        } catch (Exception e) {
+            attributes.addFlashAttribute("error", "unknown error");
+            return "redirect:/admin/products/new";
         }
-        productService.saveProduct(product);
-        return "redirect:/catalog/products/" + product.getId();
+
     }
     @GetMapping("/products/{productId}/edit")
     public String showEditProductForm(@PathVariable(value = "productId") Long id, Model model) {
@@ -79,24 +86,30 @@ public class AdminController {
                                 BindingResult bindingResult,
                                 RedirectAttributes attributes) {
         if (bindingResult.hasErrors()) {
-            attributes.addFlashAttribute("message", "validation error");
+            attributes.addFlashAttribute("error", "validation error");
             return "redirect:/admin/products/" + id + "/edit";
         }
-        Optional<Product> existingProduct = productService.findProductById(id);
-        if (existingProduct.isPresent()){
-            Product productToUpdate = existingProduct.get();
-            productToUpdate.setCategory(product.getCategory());
-            productToUpdate.setName(product.getName());
-            productToUpdate.setDescription(product.getDescription());
-            productToUpdate.setPrice(product.getPrice());
-            if (product.getDescription().length() > 200) {
-                productToUpdate.setShortDescription(product.getDescription().substring(0,200) + "..");
-            } else {
-                productToUpdate.setShortDescription(product.getDescription());
+        try {
+            Optional<Product> existingProduct = productService.findProductById(id);
+            if (existingProduct.isPresent()){
+                Product productToUpdate = existingProduct.get();
+                productToUpdate.setCategory(product.getCategory());
+                productToUpdate.setName(product.getName());
+                productToUpdate.setDescription(product.getDescription());
+                productToUpdate.setPrice(product.getPrice());
+                if (product.getDescription().length() > 200) {
+                    productToUpdate.setShortDescription(product.getDescription().substring(0,200) + "..");
+                } else {
+                    productToUpdate.setShortDescription(product.getDescription());
+                }
+                productService.saveProduct(productToUpdate);
             }
-            productService.saveProduct(productToUpdate);
+            return "redirect:/catalog/products/" + product.getId();
+        } catch (Exception e) {
+            attributes.addFlashAttribute("error", "unknown error");
+            return "redirect:/admin/products/" + id + "/edit";
         }
-        return "redirect:/catalog/products/" + product.getId();
+
     }
 
     @PostMapping ("/products/{id}/delete")
@@ -113,15 +126,19 @@ public class AdminController {
         return "admin/categoryForm";
     }
     @PostMapping("/category/new")
-    public String addCategory(@ModelAttribute("newCategory")  Category category,
-                              Model model,
-                              BindingResult bindingResult) {
+    public String addCategory(@Valid @ModelAttribute("newCategory")  Category category,
+                              BindingResult bindingResult,
+                              RedirectAttributes attributes) {
+        if (bindingResult.hasErrors()) {
+            attributes.addFlashAttribute("error", "validation error");
+            return "redirect:/admin/category/new";
+        }
         try {
             categoryService.saveCategory(category);
+            attributes.addFlashAttribute("message", "Category add - " + category.getName());
             return "redirect:/admin/category/new";
         } catch (Exception e) {
-            model.addAttribute("allCategories", categoryService.getAllCategories());
-            model.addAttribute("error", "error");
+            attributes.addFlashAttribute("error", "unknown error");
             return "/admin/categoryForm";
         }
     }

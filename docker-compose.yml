@@ -12,6 +12,22 @@ networks:
 
 services:
 
+  e-shop-app:
+    container_name: e-shop-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    networks:
+      - e-shop-network
+    env_file:
+      - .env
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=prod
+#      - GITHUB_CLIENT_ID=6c0d9a5448fb9ea36d17
+#      - GITHUB_CLIENT_SECRET=ced0bc566550b8044405d75ecdfacc8f2924c7cc
+
   e-shop-redis:
     container_name: e-shop-redis
     image: redis:latest

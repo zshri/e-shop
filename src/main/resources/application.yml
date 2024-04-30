@@ -28,6 +28,8 @@ spring:
           github:
             client-id: 6c0d9a5448fb9ea36d17
             client-secret: ced0bc566550b8044405d75ecdfacc8f2924c7cc
+#            client-id: ${GITHUB_CLIENT_ID}
+#            client-secret: ${GITHUB_CLIENT_SECRET}
   data:
     redis:
       host: localhost
@@ -46,5 +48,16 @@ spring:
       on-profile: test
   datasource:
     url: jdbc:postgresql://localhost:5432/e-shop-test-db
+    username: sa
+    password: 12
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: jdbc:postgresql://e-shop-postgres:5432/postgres-db
     username: sa
     password: 12

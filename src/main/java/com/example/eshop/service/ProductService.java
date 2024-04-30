@@ -31,6 +31,7 @@ public class ProductService {
 
         Specification<Product> specification = (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
+            predicates.add(criteriaBuilder.equal(root.get("deleted"), false));
 //            if (filter != null && !filter.isEmpty()) {
 //                predicates.add(criteriaBuilder.like(root.get("fieldName"), "%" + filter + "%"));
 //            }
@@ -58,8 +59,16 @@ public class ProductService {
         return productRepository.save(product);
     }
 
+//    public void deleteProduct(Long id) {
+//        productRepository.deleteById(id);
+//    }
     public void deleteProduct(Long id) {
-        productRepository.deleteById(id);
+        Optional<Product> product = productRepository.findById(id);
+        if (product.isPresent()) {
+            Product product1 = product.get();
+            product1.setDeleted(true);
+            saveProduct(product1);
+        }
     }
 
 

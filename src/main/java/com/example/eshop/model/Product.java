@@ -39,6 +39,8 @@ public class Product {
 
     private String shortDescription;
 
+    private boolean deleted;
+
     @Positive(message = "Price must be positive")
     private Double price;
 
