@@ -13,13 +13,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
+//@ActiveProfiles("test")
 public class AdminCatalogIntegrationTest {
 
     /*
     *
     * */
-
     @Autowired
     private MockMvc mockMvc;
 

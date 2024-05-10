@@ -1,0 +1,33 @@
+
+name: deploy
+
+on:
+  workflow_dispatch:
+
+
+jobs:
+
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Chown
+        run: |
+          sudo chown -R runner:runner /home/runner/actions-runner/
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Deploy with Docker Compose
+        env:
+          GHUB_CLIENT_ID: ${{ secrets.GHUB_CLIENT_ID }}
+          GHUB_CLIENT_SECRET: ${{ secrets.GHUB_CLIENT_SECRET }}
+          DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
+          DB_USERNAME: ${{ secrets.PROD_DB_USERNAME }}
+          REDIS_PASSWORD: ${{ secrets.PROD_REDIS_PASSWORD }}
+          TEST_DB_USERNAME: ${{ secrets.TEST_DB_USERNAME }}
+          TEST_DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
+        run: |
+          docker-compose -f docker-compose.prod.yml pull
+          docker-compose -f docker-compose.prod.yml down || true
+          docker-compose -f docker-compose.prod.yml up -d

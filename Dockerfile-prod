@@ -1,0 +1,17 @@
+FROM amazoncorretto:17-alpine-jdk
+
+RUN apk add --no-cache maven
+
+COPY . /app
+
+WORKDIR /app
+
+#ENV SPRING_PROFILES_ACTIVE=test
+#
+#RUN mvn test -Ptest
+
+ENV SPRING_PROFILES_ACTIVE=prod
+
+RUN mvn package  -DskipTests=true;
+
+ENTRYPOINT ["java", "-jar", "/app/target/e-shop-0.0.1-SNAPSHOT.jar"]

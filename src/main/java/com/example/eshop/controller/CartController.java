@@ -25,13 +25,8 @@ public class CartController {
     }
     @GetMapping
     public String getCart(Model model,
-                          RedirectAttributes redirectAttributes,
                           @AuthenticationPrincipal User user){
         if (user != null)  {
-            String message = (String) redirectAttributes.getFlashAttributes().get("message");
-            if (message != null) {
-                model.addAttribute("message", message);
-            }
             Cart cart = cartService.getCart(user);
             model.addAttribute("cart", cart );
             return "order/cart";
@@ -40,32 +35,32 @@ public class CartController {
         }
     }
     @PostMapping("/{idProduct}/add")
-    public RedirectView addToCart(@PathVariable("idProduct") Long idProduct,
-                                  RedirectAttributes attributes,
-                                  @AuthenticationPrincipal User user) {
+    public String addToCart(@PathVariable("idProduct") Long idProduct,
+                            RedirectAttributes attributes,
+                            @AuthenticationPrincipal User user) {
         if (user != null)  {
             String productName = cartService.addProductToCart(idProduct, user);
             attributes.addFlashAttribute("message", productName + " added to cart.");
-            return new RedirectView("/cart");
+            return "redirect:/cart";
         } else {
-            return new RedirectView("/login");
+            return "redirect:/login";
         }
     }
     @PostMapping("/{idCartItem}/delete")
-    public RedirectView delToCart(@PathVariable("idCartItem") Long idCartItem,
-                                  RedirectAttributes attributes,
-                                  @AuthenticationPrincipal User user) {
+    public String delToCart(@PathVariable("idCartItem") Long idCartItem,
+                            RedirectAttributes attributes,
+                            @AuthenticationPrincipal User user) {
         if (user != null)  {
             cartService.deleteCartItemToCart(idCartItem, user);
             attributes.addFlashAttribute("message", "Product with id " + idCartItem + " delete to cart.");
-            return new RedirectView("/cart");
+            return "redirect:/cart";
         } else {
-            return new RedirectView("/login");
+            return "redirect:/login";
         }
     }
     @PostMapping("/remove")
     public RedirectView removeCart(RedirectAttributes attributes,
-                                  @AuthenticationPrincipal User user) {
+                                   @AuthenticationPrincipal User user) {
         if (user != null)  {
             cartService.removeCart(user);
             attributes.addFlashAttribute("message", "Cart removed.");

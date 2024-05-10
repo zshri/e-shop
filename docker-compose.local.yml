@@ -1,0 +1,61 @@
+version: '3'
+
+
+services:
+
+  e-shop-app:
+    container_name: e-shop-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    networks:
+      - e-shop-network
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - e-shop-postgres
+      - e-shop-redis
+
+  e-shop-postgres:
+    container_name: e-shop-postgres
+    image: postgres:14-alpine
+    volumes:
+      - .volumes/postgres-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: postgres-db
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - 5432:5432
+    networks:
+      - e-shop-network
+
+
+  e-shop-redis:
+    container_name: e-shop-redis
+    image: redis:latest
+    ports:
+      - 6379:6379
+    command: redis-server --requirepass ${REDIS_PASSWORD} --appendonly yes
+    volumes:
+      - .volumes/e-shop-redis_data:/data
+    networks:
+      - e-shop-network
+
+
+
+volumes:
+  e-shop-postgres_data:
+    driver: local
+  e-shop-redis_data:
+    driver: local
+
+networks:
+  e-shop-network:
+    driver: bridge
+
+
+

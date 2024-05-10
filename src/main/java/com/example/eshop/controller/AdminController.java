@@ -27,7 +27,7 @@ public class AdminController {
     private final CategoryService categoryService;
 
     @Autowired
-    public AdminController(ProductService productService, CategoryService categoryService, CartService cartService) {
+    public AdminController(ProductService productService, CategoryService categoryService) {
         this.productService = productService;
         this.categoryService = categoryService;
     }
